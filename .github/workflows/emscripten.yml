@@ -1,0 +1,27 @@
+name: emscripten CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+      
+    - name: setup emscripten
+      uses: lovasoa/setup-emscripten@master
+
+    - name: build dependencies
+      run: ./buildDeps.sh
+    
+    - name: build wasm module
+      run: ./build.sh
+      
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: build/
