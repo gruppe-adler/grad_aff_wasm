@@ -14,6 +14,7 @@ em++ \
     ./build/grad_aff_wasm.bc \
     -s DISABLE_EXCEPTION_CATCHING=2 \
     -s MODULARIZE \
+    -s ENVIRONMENT=web \
     -s EXPORT_ES6=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
     -o ./build/grad_aff.js
