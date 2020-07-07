@@ -13,7 +13,8 @@ em++ \
     --noentry \
     ./build/grad_aff_wasm.bc \
     -s DISABLE_EXCEPTION_CATCHING=2 \
-    -s MODULARIZE \
+    -s MODULARIZE=1 \
+    -s EXPORT_NAME="gradAffFactory" \
     -s ENVIRONMENT=web \
     -s EXPORT_ES6=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
