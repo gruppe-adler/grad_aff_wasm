@@ -61,8 +61,8 @@ cd ./../..
 
 echo "Download grad_aff"
 wget https://github.com/gruppe-adler/grad_aff/archive/dev.tar.gz -q --show-progress
-mv dev.tar.gz grad_aff-master.tar.gz
-tar -xzf grad_aff-master.tar.gz
+mv dev.tar.gz grad_aff-dev.tar.gz
+tar -xzf grad_aff-dev.tar.gz
 
 echo "Building grad_aff"
 
