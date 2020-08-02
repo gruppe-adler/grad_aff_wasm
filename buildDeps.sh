@@ -83,7 +83,7 @@ emcmake cmake \
     -DBUILD_TESTS=OFF \
     -DBUILD_WITH_OIIO=OFF \
     -DBUILD_WITH_OPENSSL=OFF \
-    -DUSE_OPENMP=OFF \
+    -DGRAD_AFF_ENABLE_PARALLELISM=OFF \
     -DCMAKE_INSTALL_PREFIX=./../../install/ \
     ..
 emmake make -j
