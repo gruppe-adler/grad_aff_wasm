@@ -7,7 +7,7 @@ em++ \
     -o ./build/grad_aff_wasm.bc
 em++ \
     ./deps/install/lib/libgrad_aff.a \
-    ./deps/install/lib/liblzo2.a \
+    ./deps/install/lib/liblzokay.a \
     ./deps/install/lib/libsquish.a \
     --bind \
     --noentry \
