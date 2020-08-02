@@ -21,13 +21,14 @@ emmake make -j
 emmake make install
 cd ./../..
 
-echo "Downloading lzo"
-wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz -q --show-progress -nc
-tar -xzf lzo-2.10.tar.gz
+echo "Downloading lzokay"
+wget https://github.com/jackoalan/lzokay/archive/master.tar.gz -q --show-progress -nc
+mv master.tar.gz lzokay-master.tar.gz
+tar -xzf lzokay-master.tar.gz
 
-echo "Building lzo"
-mkdir ./lzo-2.10/build
-cd ./lzo-2.10/build
+echo "Building lzokay"
+mkdir ./lzokay-master/build
+cd ./lzokay-master/build
 emcmake cmake -DCMAKE_INSTALL_PREFIX=./../../install/ ..
 emmake make -j
 emmake make install
@@ -76,8 +77,7 @@ emcmake cmake \
     -Dpegtl_DIR="$installPath/share/pegtl/cmake" \
     -Dtsl-ordered-map_DIR="$installPath/share/cmake/tsl-ordered-map" \
     -DBoost_INCLUDE_DIR="$boostDir" \
-    -DLZO2_INCLUDE_DIR="$installPath/include" \
-    -DLZO2_LIBRARY="$installPath/lib/liblzo2.a" \
+    -Dlzokay_DIR="$installPath/lib/cmake/lzokay" \
     -DSQUISH_INCLUDE_DIR="$installPath/include" \
     -DSQUISH_LIBRARY="$installPath/lib/libsquish.a" \
     -DBUILD_TESTS=OFF \
