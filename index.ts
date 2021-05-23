@@ -14,6 +14,14 @@ interface AFFOptions {
     exit?: (exitCode: number) => unknown;
 }
 
+export class AFFNotReadyError extends Error {
+    public readonly name = 'AFFNotReadyError';
+
+    constructor() {
+        super('AFF not ready yet. Remember awaiting the "aff.ready" promise, before accessing any methods or properties.');
+    }
+}
+
 // TODO: This list is not final
 const AFF_EXCEPTION_MSGS = new Map<number, string>([
     [0, 'OK'],
@@ -36,16 +44,19 @@ export class AFFExceptionError extends Error {
     }
 }
 
+export class AFF {
     private dataView: DataView;
-    private instance: WebAssembly.Instance;
+    private instance: WebAssembly.Instance|null = null;
     private memory: WebAssembly.Memory;
     public readonly ready: Promise<void>;
 
     /**
      * @param {Response|PromiseLike<Response>} input (Promise that resolves to) Response, which includes WASM Module
+     * @param {AFFOptions} options Options
      */
     constructor(input: Response|PromiseLike<Response>, options?: AFFOptions) {
         this.memory = new WebAssembly.Memory({ initial: 256, maximum: 32768 });
+        this.dataView = new DataView(this.memory.buffer);
 
         this.ready = WebAssembly.instantiateStreaming(
             input,
@@ -113,11 +124,11 @@ export class AFFExceptionError extends Error {
                      * Write to a file descriptor
                      * @param {number} fd File descriptor
                      * @param {number} iov
-                     * @param {number} iovcnt
+                     * @param {number} iovCount
                      * @param {number} pnum
                      * @returns {0|-1} 0 = Success / -1 = An error occurred (errno is set).
                      */
-                    fd_write: (fd: number, iov: number, iovcnt: number, pnum: number): 0|-1 => {
+                    fd_write: (fd: number, iov: number, iovCount: number, pnum: number): 0|-1 => {
                         this.setErrNo(5); // EIO: Input/output error
                         return -1;
                     },
@@ -152,13 +163,13 @@ export class AFFExceptionError extends Error {
         });
     }
 
-    private get exports() {
-        return this.instance.exports as AFFExports;
+    private get exports(): AFFExports|null {
+        return this.instance?.exports as AFFExports;
     }
 
     /**
-     * Update this.dataView. Thi is called once initially, when the WASM loads
-     * and every time memory grows /shrinks and therefore the underlying memory
+     * Update this.dataView. This is called once initially, when the WASM loads
+     * and every time memory grows / shrinks and therefore the underlying memory
      * buffer changes.
      */
     private updateViews() {
@@ -171,6 +182,8 @@ export class AFFExceptionError extends Error {
      * @returns {number} This function returns a pointer to the allocated memory.
      */
     private malloc(size: number): number {
+        if (this.exports === null) throw new AFFNotReadyError();
+
         const ptr = this.exports.malloc(size);
         if (ptr === NULL_POINTER) throw new Error('Failed to allocate memory');
 
@@ -182,6 +195,8 @@ export class AFFExceptionError extends Error {
      * @param {number} ptr This is the pointer to a memory block previously allocated
      */
     private free(ptr: number): void {
+        if (this.exports === null) throw new AFFNotReadyError();
+
         this.exports.free(ptr);
     }
 
@@ -218,6 +233,8 @@ export class AFFExceptionError extends Error {
      * @param errno errno
      */
     private setErrNo(errno: number) {
+        if (this.exports === null) throw new AFFNotReadyError();
+
         this.dataView.setInt32(this.exports.__errno_location(), errno);
     }
 
@@ -237,8 +254,16 @@ export class AFFExceptionError extends Error {
      * Encode image data to PAA bytes
      * @param {ImageData} imageData Image data
      * @returns {Uint8Array} byte-encoded PAA
+     * 
+     * @throws {@link AFFNotReadyError}
+     * Thrown if this function is called before AFF instance is ready. (await the .ready promise to prevent this)
+     * 
+     * @throws {@link AFFExceptionError}
+     * Thrown if grad_aff implementation throws any exceptions.
      */
     public encode(imageData: ImageData): Uint8Array {
+        if (this.exports === null) throw new AFFNotReadyError();
+
         const sizePtr = this.malloc(4);
         const imageDataPtr = this.writeBufferToMemory(imageData.data.buffer);
 
@@ -260,8 +285,16 @@ export class AFFExceptionError extends Error {
      * Encode PAA bytes to image data
      * @param {Uint8Array} data byte-encoded PAA
      * @returns {ImageData} image data
+     * 
+     * @throws {@link AFFNotReadyError}
+     * Thrown if this function is called before AFF instance is ready. (await the .ready promise to prevent this)
+     * 
+     * @throws {@link AFFExceptionError}
+     * Thrown if grad_aff implementation throws any exceptions.
      */
     public decode(data: Uint8Array): ImageData {
+        if (this.exports === null) throw new AFFNotReadyError();
+
         const outputSizePtr = this.malloc(4);
         const widthPtr = this.malloc(2);
         const heightPtr = this.malloc(2);

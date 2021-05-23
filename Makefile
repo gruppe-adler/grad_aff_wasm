@@ -68,3 +68,4 @@ $(OUT_DIR)/index.html: index.html
 # javascript
 $(OUT_DIR)/index.js: index.ts tsconfig.json
 	tsc
+	cp index.ts $(OUT_DIR)
