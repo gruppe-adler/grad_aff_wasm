@@ -2,7 +2,7 @@
 
 ## Makefile
 The makefile does multiple things:
-1. Compiles `grad_aff.c` to WebAssembly
+1. Compiles `grad_aff_paa.c` to WebAssembly
 2. Optimizes WebAssembly with `wasm-opt`
 3. Compiles TypeScript glue code (`index.ts`) to JavaScript
 4. Copies `index.html` to release (example html code, for quick testing)

@@ -42,7 +42,7 @@
             draw(imageData);
 
             (async () => {
-                const grad_aff = await init('/grad_aff.wasm');
+                const grad_aff = await init('/grad_aff_paa.wasm');
 
                 const arr = grad_aff.encode(imageData);
                 const blob = new Blob([arr]);

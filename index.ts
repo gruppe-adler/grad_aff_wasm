@@ -322,7 +322,7 @@ export class AFF {
 /**
  * @param {Request|RequestInfo|URL|Response|Promise<Response>} input
  */
-export default async function init(input: Request|RequestInfo|URL|Response|Promise<Response> = '/grad_aff.wasm', options?: AFFOptions): Promise<AFF> {
+export default async function init(input: Request|RequestInfo|URL|Response|Promise<Response> = '/grad_aff_paa.wasm', options?: AFFOptions): Promise<AFF> {
     if (typeof input === 'string' || input instanceof Request || input instanceof URL) {
         if (input instanceof URL) input = input.toString();
 

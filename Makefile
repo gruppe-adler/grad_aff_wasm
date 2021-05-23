@@ -1,5 +1,5 @@
-SOURCES = grad_aff.c
-OUT_NAME = grad_aff
+SOURCES = grad_aff_paa.c
+OUT_NAME = grad_aff_paa
 OUT_DIR := release
 COMPILERFLAGS :=
 LDFLAGS :=
