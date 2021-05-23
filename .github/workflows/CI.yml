@@ -1,0 +1,15 @@
+name: '[CI] Build WASM'
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v2
+    - run: docker build -t grad_aff_wasm_sdk .
+    - run: docker run --rm -v ${PWD}:/usr/src/app grad_aff_wasm_sdk make
+    - uses: actions/upload-artifact@v2
+      with:
+        name: grad_aff_wasm
+        path: release
