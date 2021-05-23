@@ -1,7 +1,8 @@
 # Grad AFF WebAssembly
+This repo contains a toolchain to build WebAssembly with [grad_aff](https://github.com/gruppe-adler/grad_aff). It also contains the source code of the WebAssembly used in [paa.gruppe-adler.de](https://github.com/gruppe-adler/paa.gruppe-adler.de).
 
 ## Makefile
-The makefile does multiple things:
+The makefile can be easily used within the [Docker Image](#docker-image) and does multiple things at once:
 1. Compiles `grad_aff_paa.c` to WebAssembly
 2. Optimizes WebAssembly with `wasm-opt`
 3. Compiles TypeScript glue code (`index.ts`) to JavaScript
@@ -37,12 +38,12 @@ The image can be built like any other docker image:
 docker build -t grad_aff_wasm_sdk . 2> build.log
 ```
 
-### Starting
-Either start a container with an interactive shell:
+### Building WASM
+Either start a sdk-container with an interactive shell (to run `make` multiple times or write your own Makefile / build script):
 ```
 docker run --rm -it -v ${PWD}:/usr/src/app grad_aff_wasm_sdk /bin/sh
 ```
-or just run `make` once:
+or just run `make` once within the sdk-container:
 ```
 docker run --rm -v ${PWD}:/usr/src/app grad_aff_wasm_sdk make
 ```
