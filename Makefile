@@ -4,7 +4,7 @@ OUT_DIR := release
 COMPILERFLAGS :=
 LDFLAGS :=
 LIBS := grad_aff squish lzokay
-EXPORTS = free malloc encode decode free_encoded_data get_last_exception
+EXPORTS = free malloc encode decode free_encoded_data get_last_aff_exception
 
 # ###################################################################################################################
 

@@ -95,13 +95,13 @@ uint8_t* decode (uint8_t* data, size_t data_size, uint16_t* width, uint16_t* hei
 }
 
 /*
-* Function: get_last_exception
+* Function: get_last_aff_exception
 * ----------------------------
-*   Get last exception.
+*   Get last grad_aff exception.
 *
 *   returns: exception code
 */
-int8_t get_last_exception() {
+int8_t get_last_aff_exception() {
     // TODO
     return -1;
 }

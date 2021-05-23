@@ -4,7 +4,7 @@ interface AFFExports extends WebAssembly.Exports {
     encode: (width: number, height: number, data: number, size: number) => number;
     free_encoded_data: (ptr: number) => 0|1;
     decode: (data: number, dataSize: number, width: number, height: number, size: number) => number;
-    get_last_exception: () => number;
+    get_last_aff_exception: () => number;
     free: (ptr: number) => number;
     malloc: (size: number) => number;
     __errno_location: () => number;
@@ -14,7 +14,28 @@ interface AFFOptions {
     exit?: (exitCode: number) => unknown;
 }
 
-class AFF {
+// TODO: This list is not final
+const AFF_EXCEPTION_MSGS = new Map<number, string>([
+    [0, 'OK'],
+    [-1, 'Unknown Error'],
+    [-2, 'Read Error'],
+    [-3, 'Argument Error'],
+    [-4, 'Invalid State'],
+    [-5, 'IO Error'],
+    [-6, 'Compression Error'],
+    [-7, 'Invalid State'],
+]);
+
+export class AFFExceptionError extends Error {
+    constructor(code: number) {
+        const message = AFF_EXCEPTION_MSGS.get(code) ?? 'Unknown Error Code';
+
+        super(`${message} (Code: ${code})`);
+
+        this.name = 'AFFExceptionError';
+    }
+}
+
     private dataView: DataView;
     private instance: WebAssembly.Instance;
     private memory: WebAssembly.Memory;
@@ -147,7 +168,7 @@ class AFF {
     /**
      * Allocate memory block
      * @param {number} size Size of the memory block, in bytes.
-     * @returns {number} This function returns a pointer to the allocated memory, or NULL if the request fails.
+     * @returns {number} This function returns a pointer to the allocated memory.
      */
     private malloc(size: number): number {
         const ptr = this.exports.malloc(size);
@@ -172,7 +193,6 @@ class AFF {
      */
     private writeBufferToMemory(buffer: ArrayBufferLike): number {
         const ptr = this.malloc(buffer.byteLength);
-        if (ptr === NULL_POINTER) throw new Error('Could not allocate memory for buffer');
 
         const arr = new Uint8Array(buffer);
 
@@ -201,11 +221,16 @@ class AFF {
         this.dataView.setInt32(this.exports.__errno_location(), errno);
     }
 
-    private getLastException(): Error {
-        const num = this.exports.get_last_exception();
+    /**
+     * Return error, which corresponds to last thrown grad_aff exception
+     * @returns Error according to last exception
+     */
+    private getLastAFFException(): AFFExceptionError {
+        if (this.exports === null) throw new AFFNotReadyError();
 
-        // TODO
-        return new Error('Unknown error');
+        const num = this.exports.get_last_aff_exception();
+
+        return new AFFExceptionError(num);
     }
 
     /**
@@ -218,13 +243,13 @@ class AFF {
         const imageDataPtr = this.writeBufferToMemory(imageData.data.buffer);
 
         const ptr = this.exports.encode(imageData.width, imageData.height, imageDataPtr, sizePtr);
-        if (ptr === NULL_POINTER) throw this.getLastException();
+        if (ptr === NULL_POINTER) throw this.getLastAFFException();
 
         const size = this.dataView.getUint32(sizePtr, true);
         const output = this.getBytesFromMemory(ptr, size);
         
         const success = this.exports.free_encoded_data(ptr);
-        if (success === 0) throw this.getLastException();
+        if (success === 0) throw this.getLastAFFException();
         this.free(sizePtr);
         this.free(imageDataPtr);
         
@@ -243,7 +268,7 @@ class AFF {
         const dataPtr = this.writeBufferToMemory(data.buffer);
 
         const ptr = this.exports.decode(dataPtr, data.length, widthPtr, heightPtr, outputSizePtr);
-        if (ptr === NULL_POINTER) throw this.getLastException();
+        if (ptr === NULL_POINTER) throw this.getLastAFFException();
 
         const size = this.dataView.getUint32(outputSizePtr, true);
         const width = this.dataView.getUint16(widthPtr, true);
