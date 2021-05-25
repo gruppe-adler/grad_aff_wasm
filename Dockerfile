@@ -61,8 +61,8 @@ RUN emcmake cmake .. -DPEGTL_BUILD_TESTS=OFF -DPEGTL_BUILD_EXAMPLES=OFF && emmak
 
 # Build grad_aff
 WORKDIR /tmp
-RUN curl -L https://github.com/gruppe-adler/grad_aff/archive/f1625f6676636516d8e4945c07989f61ff4810d2.tar.gz | tar xz
-WORKDIR grad_aff-f1625f6676636516d8e4945c07989f61ff4810d2/build
+RUN curl -L https://github.com/gruppe-adler/grad_aff/archive/d6689c0563c904650fa2005a9c28ed466e4279bc.tar.gz | tar xz
+WORKDIR grad_aff-d6689c0563c904650fa2005a9c28ed466e4279bc/build
 RUN emcmake cmake .. \
     -DBUILD_TESTS=OFF \
     -DDYNAMIC_LIB=OFF \

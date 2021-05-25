@@ -22,7 +22,6 @@ export class AFFNotReadyError extends Error {
     }
 }
 
-// TODO: This list is not final
 const AFF_EXCEPTION_MSGS = new Map<number, string>([
     [0, 'OK'],
     [-1, 'Unknown Error'],

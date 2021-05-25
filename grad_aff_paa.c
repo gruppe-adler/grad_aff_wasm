@@ -1,4 +1,5 @@
 #include <grad_aff/paa/Paa.h>
+#include <grad_aff/core/AffExceptions.h>
 #include <stdlib.h>
 
 /*
@@ -101,7 +102,6 @@ uint8_t* decode (uint8_t* data, size_t data_size, uint16_t* width, uint16_t* hei
 *
 *   returns: exception code
 */
-int8_t get_last_aff_exception() {
-    // TODO
-    return -1;
+int32_t get_last_aff_exception() {
+    return AffGetLastError();
 }

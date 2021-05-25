@@ -30,7 +30,7 @@ All libraries are installed in `/usr/local`.
 | boost | 1.76.0 | [Homepage](https://www.boost.org/)
 | libsquish | 1.15 | -
 | PEGTL | 3.2.0 | [GitHub](https://github.com/taocpp/PEGTL)
-| grad_aff | commit `f1625f6` | [GitHub](https://github.com/gruppe-adler/grad_aff)
+| grad_aff | commit `d6689c0` | [GitHub](https://github.com/gruppe-adler/grad_aff)
 
 ### Building
 The image can be built like any other docker image:
