@@ -1,3 +1,4 @@
+/* eslint-disable camelcase, @typescript-eslint/no-unused-vars */
 const NULL_POINTER = 0;
 
 interface AFFExports extends WebAssembly.Exports {
@@ -30,7 +31,7 @@ const AFF_EXCEPTION_MSGS = new Map<number, string>([
     [-4, 'Invalid State'],
     [-5, 'IO Error'],
     [-6, 'Compression Error'],
-    [-7, 'Invalid State'],
+    [-7, 'Invalid State']
 ]);
 
 export class AFFExceptionError extends Error {
@@ -253,10 +254,10 @@ export class AFF {
      * Encode image data to PAA bytes
      * @param {ImageData} imageData Image data
      * @returns {Uint8Array} byte-encoded PAA
-     * 
+     *
      * @throws {@link AFFNotReadyError}
      * Thrown if this function is called before AFF instance is ready. (await the .ready promise to prevent this)
-     * 
+     *
      * @throws {@link AFFExceptionError}
      * Thrown if grad_aff implementation throws any exceptions.
      */
@@ -271,12 +272,12 @@ export class AFF {
 
         const size = this.dataView.getUint32(sizePtr, true);
         const output = this.getBytesFromMemory(ptr, size);
-        
+
         const success = this.exports.free_encoded_data(ptr);
         if (success === 0) throw this.getLastAFFException();
         this.free(sizePtr);
         this.free(imageDataPtr);
-        
+
         return output;
     }
 
@@ -284,10 +285,10 @@ export class AFF {
      * Encode PAA bytes to image data
      * @param {Uint8Array} data byte-encoded PAA
      * @returns {ImageData} image data
-     * 
+     *
      * @throws {@link AFFNotReadyError}
      * Thrown if this function is called before AFF instance is ready. (await the .ready promise to prevent this)
-     * 
+     *
      * @throws {@link AFFExceptionError}
      * Thrown if grad_aff implementation throws any exceptions.
      */
