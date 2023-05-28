@@ -30,7 +30,7 @@ RUN emcmake cmake .. && emmake make && emmake make install
 
 # Install zlib
 WORKDIR /tmp
-RUN curl -L wget http://www.zlib.net/zlib-1.2.11.tar.gz | tar xz
+RUN curl -L wget https://zlib.net/fossils/zlib-1.2.11.tar.gz | tar xz
 WORKDIR zlib-1.2.11
 RUN ./configure && emmake make install
 
